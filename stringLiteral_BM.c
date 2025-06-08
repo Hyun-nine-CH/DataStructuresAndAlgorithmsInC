@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <limits.h>
-
+/*
 int bm_match(const char txt[], const char pat[]) {
     int pt, pp;
     int skip[UCHAR_MAX + 1]; // ASCII 문자 범위
@@ -29,6 +29,30 @@ int bm_match(const char txt[], const char pat[]) {
     }
     return -1; // 패턴이 없으면 -1 반환
 }
+*/
+
+int bm_match(const char txt[], const char pat[]) {
+    int pt, pp;
+    int skip[UCHAR_MAX + 1]; // ASCII 문자 범위
+    int len_txt = strlen(txt);
+    int len_pat = strlen(pat);
+
+    for(pt=0; pt <= UCHAR_MAX; pt++)
+        skip[pt] = len_pat; // 기본값은 패턴 길이
+    for(pt = 0; pt < len_pat - 1; pt++)
+        skip[(unsigned char)pat[pt]] = len_pat - pt - 1; // 문자에 대한 스킵 값 설정
+
+    while (pt < len_txt) {
+        pp = len_pat - 1;
+        while (txt[pt] == pat[pp]) {
+            if (pp == 0) return pt;
+            pt--; pp--;
+        }
+        pt += skip[txt[pt]];  // 불일치 발생 시 스킵
+    }
+    return -1; // 패턴이 없으면 -1 반환
+}
+
 int main(void) {
     char s1[256], s2[256];
 
